@@ -11,9 +11,8 @@ def on_message(client, userdata, msg):
 
 
 client = mqtt.Client()
-client.subscribe("alta/#")
-client.subscribe("media/#")
-client.subscribe("baja/#")
+client.subscribe("Apartamento1/residencia1/Alta/#")
+client.subscribe("Apartamento1/residencia1/Media/#")
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect("172.23.65.161", 8083,60)
