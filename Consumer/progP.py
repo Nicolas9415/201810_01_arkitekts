@@ -14,7 +14,6 @@ def on_message(client, userdata, msg):
           'body':msg.payload.decode('utf-8'),
           'sbj':'msg.topic'
          }
-    url='http://172.23.65.161/correo'
     correo={"From: "+'servicio@yale.com'+"To: "+'residente@uniandes.edu.co'+"Subject: "+mail['sbj']+ "Body: "+ mail['body']}
     print(correo)
             
