@@ -15,5 +15,7 @@ client.subscribe("alta/#")
 client.subscribe("media/#")
 client.subscribe("baja/#")
 client.on_connect = on_connect
-client.loop.start()
-client.connect(host="172.24.42.93", port=8083, keepalive=60)
+client.on_message = on_message
+client.connect("172.23.65.161", 8083,60)
+client.loop_forever()
+
