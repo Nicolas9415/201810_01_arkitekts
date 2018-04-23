@@ -7,6 +7,7 @@ from functools import wraps
 from flask import Flask, request, jsonify, _request_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
+import paho.mqtt.client as mqtt
 
 AUTH0_DOMAIN = 'isis2503-jpotalora10.auth0.com'
 API_AUDIENCE = 'uniandes.edu.co/blocksecurity'
@@ -104,7 +105,11 @@ def requires_auth(f):
                          "description": "Unable to find appropriate key"}, 401)
     return decorated
 
-@app.route("/claves/add")
+
+
+ mq.connect("localhost",8083,60)
+
+@app.route('/claves/add', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def addPassword(val,index):
@@ -115,7 +120,7 @@ def addPassword(val,index):
     else:
         producer.send('claves',"ADD_PASSWORD;"+str(val)+";"+str(index))
 
-@app.route("/claves/update")
+@app.route('/claves/update', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def updatePassword(val,index):
@@ -126,7 +131,7 @@ def updatePassword(val,index):
     else:
         producer.send('claves',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
 
-@app.route("/claves/delete1")
+@app.route('/claves/del1', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def deletePassword(index):
@@ -135,7 +140,7 @@ def deletePassword(index):
     else:
         producer.send('claves',"DELETE_PASSWORD;"+str(index))
 
-@app.route("/claves/delete2")
+@app.route('/claves/del2')
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def deleteAllPasswords():
