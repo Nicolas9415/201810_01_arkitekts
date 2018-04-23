@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, _request_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
 from flask import session
+import datetime
 
 import paho.mqtt.client as mqtt
 
@@ -127,21 +128,36 @@ def addPassword(val,index):
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def updatePassword(val,index):
-    if int(val)<0 or int(val)>9999:
-        print("La clave debe contener como maximo 4 digitos")
-    elif int(index)<1 or int(index)>20:
-        print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
+    now=datetime.datetime().now()
+    if 18>now>8 and user=='propietario':
+        if int(val)<0 or int(val)>9999:
+            print("La clave debe contener como maximo 4 digitos")
+        elif int(index)<1 or int(index)>20:
+            print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
+        else:
+            producer.send('claves',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
     else:
-        producer.send('claves',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
-
+        print('El usuario solo puede cambiar la clave entre 8AM y 6PM')
+    if: user=='adminYale'
+        if int(val)<0 or int(val)>9999:
+            print("La clave debe contener como maximo 4 digitos")
+        elif int(index)<1 or int(index)>20:
+            print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
+        else:
+            producer.send('claves',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
 @app.route('/claves/del1', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def deletePassword(index):
-    if int(index)<1 or int(index)>20:
-        print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
+    now=datetime.datetime().now()
+    if 18>now>8 and user=='propietario':
+        if int(index)<1 or int(index)>20:
+            print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
+        else:
+            producer.send('claves',"DELETE_PASSWORD;"+str(index))
     else:
-        producer.send('claves',"DELETE_PASSWORD;"+str(index))
+        print("El propietario no tiene permitido eliminar la clace en esta hora")
+
 
 @app.route('/claves/del2')
 @cross_origin(headers=['Content-Type', 'Authorization'])
