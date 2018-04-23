@@ -7,6 +7,8 @@ from functools import wraps
 from flask import Flask, request, jsonify, _request_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
+from flask import session
+
 import paho.mqtt.client as mqtt
 
 AUTH0_DOMAIN = 'isis2503-jpotalora10.auth0.com'
@@ -107,7 +109,8 @@ def requires_auth(f):
 
 
 
- mq.connect("localhost",8083,60)
+ user=session['jwt_payload']['http://blockscurity/roles'][0]
+
 
 @app.route('/claves/add', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
@@ -144,7 +147,10 @@ def deletePassword(index):
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
 def deleteAllPasswords():
-    producer.send('claves',"DELETE_ALL")
+    if user=='adminyale':
+        producer.send('claves',"DELETE_ALL")
+    else:
+        print("No cuenta con los permisos necesarios apra realizar esta operacion")
 
 dicc={'add':addPassword,'update':updatePassword,'delP':deletePassword,'delAll':deleteAllPasswords}
 
