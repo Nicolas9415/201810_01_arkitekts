@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 
 //DEFINES
-#define TOPIC_SUBSCRIBE        "key.uniandes.306"
+#define TOPIC_SUBSCRIBE        "claves"
 #define TOPIC_PUBLISH          "alerta.uniandes.306"
 #define SIZE_BUFFER_DATA       50
 
@@ -22,8 +22,8 @@ const char* ssid = "FibraETB23E6";
 const char* password = "4722C625";
 
 // CONFIG MQTT
-IPAddress serverMQTT (192,168,0,7);
-const uint16_t portMQTT = 8083;
+IPAddress serverMQTT (192,168,0,6);
+const uint16_t portMQTT = 8083  ;
 // const char* usernameMQTT = "admin";
 // const char* passwordMQTT = "admin";
 
@@ -34,6 +34,7 @@ void connectWIFI() {
   Serial.println(ssid);
 
   if(WiFi.status() != WL_CONNECTED) {
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
   }
 
@@ -49,6 +50,7 @@ void connectWIFI() {
 void reconnectWIFI() {
   // Conectar a la red WiFi
   if(WiFi.status() != WL_CONNECTED) {
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
   }
 
@@ -82,6 +84,8 @@ void processData() {
         // if (!clientMQTT.connect(idDevice, usernameMQTT, passwordMQTT)) {
         if (!clientMQTT.connect(idDevice)) {
           conectMQTT = false;
+          Serial.println("Conexion MQTT fallida, rc = ");
+          Serial.println(clientMQTT.state());
         }
         conectMQTT = true;
       }
@@ -91,7 +95,7 @@ void processData() {
 
       if(conectMQTT) {
         if(clientMQTT.subscribe(TOPIC_SUBSCRIBE)) {
-          // Serial.println("Subscribe OK");
+          Serial.println("Subscribe OK");
         }
       }
     }
@@ -100,6 +104,7 @@ void processData() {
       if(clientMQTT.publish(TOPIC_PUBLISH, bufferData)) {
         inputString = "";
         stringComplete = false;
+        Serial.println("Published to topic");
       }
       init_flag = false;
     }
