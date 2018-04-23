@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 import threading, logging, time
-
 from kafka import KafkaConsumer, KafkaProducer
+import json
+from six.moves.urllib.request import urlopen
+from functools import wraps
+
+from flask import Flask, request, jsonify, _request_ctx_stack
+from flask_cors import cross_origin
+from jose import jwt
+
 
 producer = KafkaProducer(bootstrap_servers='localhost:8090')
 
@@ -39,32 +46,4 @@ elif len(parts)==2:
     dicc[parts[0]](parts[1])
 else:
     dicc[parts[0]]()
-
-
-
-
-
-
-
-
-
-
-
-class Producer(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.stop_event = threading.Event()
-
-    def stop(self):
-        self.stop_event.set()
-
-    def run(self):
-        producer = KafkaProducer(bootstrap_servers='localhost:9092')
-
-        while not self.stop_event.is_set():
-            producer.send('my-topic', b"test")
-            producer.send('my-topic', b"\xc2Hola, mundo!")
-            time.sleep(1)
-
-        producer.close()
 
