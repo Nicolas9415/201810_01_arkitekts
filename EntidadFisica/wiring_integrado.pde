@@ -6,7 +6,7 @@ String      inputString = "";
 char        bufferData [SIZE_BUFFER_DATA];
 
 //Specified password
-const String KEY = "1234";
+const String KEY = "5678";
 
 //Time in milliseconds which the system is locked
 const int LOCK_TIME = 30000;
@@ -140,7 +140,7 @@ void loop()
   }
   else {
     if(digitalRead(CONTACT_PIN)) {
-      if((millis()-currTime)>=30000) {
+      if((millis()-currTime)>=5000) {
         setColor(255, 0, 0);
         Serial.println("Door opened for too long!");
       }
@@ -150,8 +150,9 @@ void loop()
       buttonState = false;
       Serial.println("Door closed!!");
     }
-    
-    //Value conversion from digital to voltage
+  }
+  
+  //Value conversion from digital to voltage
   batteryCharge = (analogRead(BATTERY_PIN)*5.4)/1024;
   
   //Measured value comparison with min voltage required
@@ -161,7 +162,6 @@ void loop()
   }
   else {
     digitalWrite(BATTERY_LED,LOW);
-}
   }
   
   char customKey;
@@ -261,8 +261,20 @@ void loop()
   
   receiveData();
   if (stringComplete){
-      String cmd = "";
-      processCommand(&cmd, inputString);
+      String cmd[4] = {"", "", ""};
+      processCommand(cmd, inputString);
+      if(cmd[1] == "DELETE_ALL"){
+        deleteAllPasswords();
+      }
+      if(cmd[1] == "UPDATE_PASSWORD"){
+        updatePassword(cmd[2].toInt(), cmd[3].toInt());
+      }
+      if(cmd[1] == "DELETE_PASSWORD"){
+        deletePassword(cmd[1].toInt());
+      }
+      if(cmd[1] == "ADD_PASSWORD"){
+        addPassword(cmd[2].toInt(), cmd[3].toInt());
+      }
   }
   
   delay(100);
@@ -286,6 +298,8 @@ void receiveData() {
     if (inChar == '\n') {
       inputString.toCharArray(bufferData, SIZE_BUFFER_DATA);
       stringComplete = true;
+      Serial.println("Se recibe");
+      Serial.println(inputString);
     }
   }
 }
@@ -324,6 +338,7 @@ void processCommand(String* result, String command) {
   while ((str = strtok_r(p, ";", &p)) != NULL) {
     // delimiter is the semicolon
     result[i++] = str;
+    Serial.println(str);
   }
 }
 
