@@ -1,29 +1,93 @@
 #!/usr/bin/env python
-from kafka import KafkaConsumer, KafkaProducer
 import json
 from six.moves.urllib.request import urlopen
 from functools import wraps
 
 from flask import Flask, request, jsonify, _request_ctx_stack
-from flask_cors import cross_origin
-from jose import jwt
 from flask import session
 import datetime
 
-import paho.mqtt.client as mqtt
+import paho.mqtt.client as mqttClient
+import time
+
+
+broker_address = "192.168.43.148"
+port = 1883
+
+
+client = mqttClient.Client("Python")               #create new instance
+client.connect(broker_address, port=port)          #connect to broker
+client.loop_start()        #start the loop
+
+while Connected != True:    #Wait for connection
+    print("waiting for connection")
+
+dicc={'add':addPassword,'update':updatePassword,'delP':deletePassword,'delAll':deleteAllPasswords}
+
+command=input("Ingrese la operacion que desea relizar con los argumentos necesarios")
+parts=command.split(";")
+
+if len(parts)>2:
+    dicc[parts[0]](parts[1],parts[2])
+elif len(parts)==2:
+    dicc[parts[0]](parts[1])
+else:
+    dicc[parts[0]]()
 
 AUTH0_DOMAIN = 'isis2503-jpotalora10.auth0.com'
 API_AUDIENCE = 'uniandes.edu.co/blocksecurity'
 ALGORITHMS = ["RS256"]
 
 app=Flask(__name__)
-producer = KafkaProducer(bootstrap_servers='localhost:8090')
+
+oauth = OAuth(app)
+
+auth0 = oauth.register(
+    'auth0',
+    client_id='3uxEZCqcYG-QyhES5770rxQ3wwOfdufn',
+    client_secret='secretoooooooooo',
+    api_base_url='https://isis2503-jpotalora10.auth0.com',
+    access_token_url='https://isis2503-jpotalora10.auth0.com/oauth/token',
+    authorize_url='https://isis2503-jpotalora10.auth0.com/authorize',
+    client_kwargs={
+        'scope': 'openid profile',
+    },
+)
 
 
-class AuthError(Exception):
-    def __init__(self, error, status_code):
-        self.error = error
-        self.status_code = status_code
+# Here we're using the /callback route.
+@app.route('/callback')
+def callback_handling():
+    # Handles response from token endpoint
+    resp = auth0.authorize_access_token()
+
+    url = 'https://isis2503-jpotalora10.auth0.com/userinfo'
+    headers = {'authorization': 'Bearer ' + resp['access_token']}
+    resp = requests.get(url, headers=headers)
+    userinfo = resp.json()
+
+    # Store the tue user information in flask session.
+    session['jwt_payload'] = userinfo
+
+    session['profile'] = {
+        'user_id': userinfo['sub'],
+        'name': userinfo['name'],
+        'picture': userinfo['picture']
+    }
+
+    return redirect('/dashboard')
+
+@app.route('/login')
+def login():
+    return auth0.authorize_redirect(redirect_uri='YOUR_CALLBACK_URL', audience='https://isis2503-jpotalora10.auth0.com/userinfo')
+
+@app.route('/logout')
+def logout():
+    # Clear session stored data
+    session.clear()
+    # Redirect user to logout endpoint
+    params = {'returnTo': url_for('home', _external=True), 'client_id': '3uxEZCqcYG-QyhES5770rxQ3wwOfdufn'}
+    return redirect(auth0.base_url + '/v2/logout?' + urlencode(params))
 
 @APP.errorhandler(AuthError)
 def handle_auth_error(ex):
@@ -110,7 +174,7 @@ def requires_auth(f):
 
 
 
- user=session['jwt_payload']['http://blockscurity/roles'][0]
+user=session['jwt_payload']['http://blockscurity/roles'][0]
 
 
 @app.route('/claves/add', methods = ['POST'])
@@ -122,7 +186,7 @@ def addPassword(val,index):
     elif index<1 or index>20:
         print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
     else:
-        producer.send('claves',"ADD_PASSWORD;"+str(val)+";"+str(index))
+        client.publish('security.sens.subs',"ADD_PASSWORD;"+str(val)+";"+str(index))
 
 @app.route('/claves/update', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
@@ -135,16 +199,17 @@ def updatePassword(val,index):
         elif int(index)<1 or int(index)>20:
             print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
         else:
-            producer.send('claves',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
+            client.publish('security.sens.subs',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
     else:
         print('El usuario solo puede cambiar la clave entre 8AM y 6PM')
-    if: user=='adminYale'
+    if user=='adminYale':
         if int(val)<0 or int(val)>9999:
             print("La clave debe contener como maximo 4 digitos")
         elif int(index)<1 or int(index)>20:
             print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
         else:
-            producer.send('claves',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
+            client.publish('security.sens.subs',"UPDATE_PASSWORD;"+str(val)+";"+str(index))
+
 @app.route('/claves/del1', methods = ['POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @requires_auth
@@ -154,7 +219,7 @@ def deletePassword(index):
         if int(index)<1 or int(index)>20:
             print("El sistema solo puede almacenar 20 claves, y el indice debe ser mayor a 0")
         else:
-            producer.send('claves',"DELETE_PASSWORD;"+str(index))
+            client.publish('security.sens.subs',"DELETE_PASSWORD;"+str(index))
     else:
         print("El propietario no tiene permitido eliminar la clace en esta hora")
 
@@ -164,21 +229,10 @@ def deletePassword(index):
 @requires_auth
 def deleteAllPasswords():
     if user=='adminyale':
-        producer.send('claves',"DELETE_ALL")
     else:
         print("No cuenta con los permisos necesarios apra realizar esta operacion")
 
-dicc={'add':addPassword,'update':updatePassword,'delP':deletePassword,'delAll':deleteAllPasswords}
 
-command=input("Ingrese la operacion que desea relizar con los argumentos necesarios")
-parts=command.split(";")
-
-if len(parts)>2:
-    dicc[parts[0]](parts[1],parts[2])
-elif len(parts)==2:
-    dicc[parts[0]](parts[1])
-else:
-    dicc[parts[0]]()
 
 
 
