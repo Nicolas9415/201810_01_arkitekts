@@ -24,7 +24,7 @@ def send():
 def recive():
 badChecks=0
     while True:
-        if "Hub ok" in mensaje.payload():
+        if "Hub ok" in status:
             client.publish("conjunto1/residencia1/heartbeathub", "todo bien")
             badChecks = 0
             time.sleep(10)
