@@ -1,9 +1,11 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 
+
+
 //DEFINES
-#define TOPIC_SUBSCRIBE        "claves"
-#define TOPIC_PUBLISH          "alerta.uniandes.306"
+#define TOPIC_SUBSCRIBE        "security.sens.subs"
+#define TOPIC_PUBLISH          "security.sens"
 #define SIZE_BUFFER_DATA       50
 
 //VARIABLES
@@ -18,12 +20,12 @@ WiFiClient    clientWIFI;
 PubSubClient  clientMQTT(clientWIFI);
 
 // CONFIG WIFI
-const char* ssid = "FibraETB23E6";
-const char* password = "4722C625";
+const char* ssid = "Nicolas";
+const char* password = "Anaescallon";
 
 // CONFIG MQTT
-IPAddress serverMQTT (192,168,0,6);
-const uint16_t portMQTT = 8083  ;
+IPAddress serverMQTT (192,168,43,148);
+const uint16_t portMQTT = 1883;
 // const char* usernameMQTT = "admin";
 // const char* passwordMQTT = "admin";
 
