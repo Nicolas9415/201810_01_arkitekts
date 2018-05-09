@@ -1,15 +1,15 @@
 import paho.mqtt.client as paho
 from datetime import datetime
 import time
-import threading
 
 client = paho.Client("Py")
 client.connect("192.168.43.148", 1883)
-client.on_message=on_message
+client.on_message = on_message
 
 status=""
 
-def on_message(client,usr,msg)
+def on_message(client,usr,msg):
+    print("health check")
     status=msg.payload
 
 topic = "residencia.checks"
@@ -22,7 +22,7 @@ def send():
 
 
 def recive():
-badChecks=0
+    badChecks=0
     while True:
         if "Hub ok" in status:
             client.publish("conjunto1/residencia1/heartbeathub", "todo bien")
@@ -32,5 +32,5 @@ badChecks=0
         else:
             badChecks=badchecks+1
             time.sleep(10)
-        if badChecks >=5
+        if badChecks > 4:
             client.publish("conjunto1/residencia1/propietario","CERRADURA FUERA DE LINEA")
