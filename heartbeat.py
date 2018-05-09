@@ -13,7 +13,7 @@ def on_message(client,usr,msg)
     status=msg.payload
 
 topic = "residencia.checks"
-client.subsribe("topic")
+client.subsribe("security.sens")
 
 def send():
     while True:
