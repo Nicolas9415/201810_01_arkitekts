@@ -1,11 +1,11 @@
-#include <PubSubClient.h>
-#include <ESP8266WiFi.h>
+  #include <PubSubClient.h>
+  #include <ESP8266WiFi.h>
 
 
 
 //DEFINES
-#define TOPIC_SUBSCRIBE        "security.sens.subs"
-#define TOPIC_PUBLISH          "security.sens"
+#define TOPIC_SUBSCRIBE        "security/apt1/hub/lock1/pass"
+#define TOPIC_PUBLISH          "security/apt1/hub/lock1/alert"
 #define SIZE_BUFFER_DATA       50
 
 //VARIABLES
@@ -97,7 +97,7 @@ void processData() {
 
       if(conectMQTT) {
         if(clientMQTT.subscribe(TOPIC_SUBSCRIBE)) {
-          Serial.println("Subscribe OK");
+            //Serial.println("Subscribe OK");
         }
       }
     }
@@ -106,7 +106,6 @@ void processData() {
       if(clientMQTT.publish(TOPIC_PUBLISH, bufferData)) {
         inputString = "";
         stringComplete = false;
-        Serial.println("Published to topic");
       }
       init_flag = false;
     }
