@@ -6,8 +6,10 @@ String      inputString = "";
 char        bufferData [SIZE_BUFFER_DATA];
 
 //Specified password
-const String KEY = "5678";
-
+const String KEY = "1234";
+const String KEY2= "5678";
+const String KEY3 = "7777";
+const String KEY4= "6666";
 //Time in milliseconds which the system is locked
 const int LOCK_TIME = 30000;
 
@@ -158,7 +160,7 @@ void loop()
   //Measured value comparison with min voltage required
   if(batteryCharge<=MIN_VOLTAGE) {
     digitalWrite(BATTERY_LED,HIGH);
-    Serial.println("LOW BATTERY");
+    Serial.println("Motion Detected");
   }
   else {
     digitalWrite(BATTERY_LED,LOW);
@@ -200,7 +202,7 @@ void loop()
     if(!open){
       currTime = millis();
     }
-    if(currentKey == KEY) {
+    if(currentKey == KEY || currentKey== KEY2||currentKey==KEY3||currentKey==KEY3||currentKey==KEY4) {
       digitalWrite(10,HIGH);
       open = true;
       setColor(0, 255, 0);
@@ -261,19 +263,19 @@ void loop()
   
   receiveData();
   if (stringComplete){
-      String cmd[4] = {"", "", ""};
+      String cmd[3] = {"", "", ""};
       processCommand(cmd, inputString);
-      if(cmd[1] == "DELETE_ALL"){
+      if(cmd[0] == "DELETE_ALL"){
         deleteAllPasswords();
       }
-      if(cmd[1] == "UPDATE_PASSWORD"){
-        updatePassword(cmd[2].toInt(), cmd[3].toInt());
+      if(cmd[0] == "UPDATE_PASSWORD"){
+        updatePassword(cmd[1].toInt(), cmd[2].toInt());
       }
-      if(cmd[1] == "DELETE_PASSWORD"){
-        deletePassword(cmd[1].toInt());
+      if(cmd[0] == "DELETE_PASSWORD"){
+        deletePassword(cmd[2].toInt());
       }
-      if(cmd[1] == "ADD_PASSWORD"){
-        addPassword(cmd[2].toInt(), cmd[3].toInt());
+      if(cmd[0] == "ADD_PASSWORD"){
+        addPassword(cmd[1].toInt(), cmd[2].toInt());
       }
   }
   
