@@ -8,8 +8,8 @@ char        bufferData [SIZE_BUFFER_DATA];
 //Specified password
 const String KEY = "1234";
 const String KEY2= "5678";
-const String KEY3 = "7777"
-const String KEY4= "6666"
+const String KEY3 = "7777";
+const String KEY4= "6666";
 //Time in milliseconds which the system is locked
 const int LOCK_TIME = 30000;
 
@@ -160,7 +160,7 @@ void loop()
   //Measured value comparison with min voltage required
   if(batteryCharge<=MIN_VOLTAGE) {
     digitalWrite(BATTERY_LED,HIGH);
-    Serial.println("Motion Detected");
+    //Serial.println("Motion Detected");
   }
   else {
     digitalWrite(BATTERY_LED,LOW);
@@ -180,7 +180,6 @@ void loop()
   //Verification of input and appended value
   if (customKey) {  
     currentKey+=String(customKey);
-    Serial.println(currentKey);
   }
 
   //If the current key contains '*' and door is open
@@ -212,7 +211,7 @@ void loop()
         Serial.println("Door opened for too long!");
       }
       else{
-        Serial.println("Door opened!!");
+        Serial.println("Door opened!");
       }
     }
     else {
@@ -221,7 +220,7 @@ void loop()
       setColor(255, 0, 0);
       delay(1000);
       setColor(0, 0, 255);
-      Serial.println("Number of attempts: "+String(attempts));
+      Serial.println("Intento de apertura sospechosa");
     }
   }else if(currentKey.length()> KEY.length()){
     if((millis()-currTime)>=30000) {
@@ -229,7 +228,7 @@ void loop()
         Serial.println("Door opened for too long!");
       }
       else{
-        Serial.println("Door opened!!");
+        Serial.println("Door opened!");
       }
   }
   if(attempts>=maxAttempts) {
@@ -247,7 +246,7 @@ void loop()
     digitalWrite(ledPin, HIGH);  // turn LED ON
     if (pirState == LOW) {
       // we have just turned on
-      Serial.println("Motion detected!");
+     // Serial.println("Motion detected!");
       // We only want to print on the output change, not state
       pirState = HIGH;
     }
@@ -255,7 +254,7 @@ void loop()
     digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH){
       // we have just turned of
-      Serial.println("Motion ended!");
+    //  Serial.println("Motion ended!");
       // We only want to print on the output change, not state
       pirState = LOW;
     }
@@ -300,7 +299,6 @@ void receiveData() {
     if (inChar == '\n') {
       inputString.toCharArray(bufferData, SIZE_BUFFER_DATA);
       stringComplete = true;
-      Serial.println("Se recibe");
       Serial.println(inputString);
     }
   }
@@ -330,7 +328,7 @@ boolean compareKey(String key) {
 }
 
 // Methods that divides the command by parameters
-void processCommand(String* result, String command) {
+char* processCommand(String* result, String command) {
   char buf[sizeof(command)];
   String vars = "";
   vars.toCharArray(buf, sizeof(buf));
@@ -341,6 +339,7 @@ void processCommand(String* result, String command) {
     // delimiter is the semicolon
     result[i++] = str;
     Serial.println(str);
+    return str;
   }
 }
 

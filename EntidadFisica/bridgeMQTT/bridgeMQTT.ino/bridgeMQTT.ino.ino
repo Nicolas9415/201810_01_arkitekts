@@ -4,8 +4,8 @@
 
 
 //DEFINES
-#define TOPIC_SUBSCRIBE        "security/apt1/hub/lock1/pass"
-#define TOPIC_PUBLISH          "security/apt1/hub/lock1/alert"
+#define TOPIC_SUBSCRIBE        "security/isis2503/hub"
+#define TOPIC_PUBLISH          "security/isis2503/apt1/alerta"
 #define SIZE_BUFFER_DATA       50
 
 //VARIABLES
