@@ -1,0 +1,5 @@
+org\uniandes\arquisoft\SecurityHub\util\Resources.class
+org\uniandes\arquisoft\SecurityHub\model\Member.class
+org\uniandes\arquisoft\SecurityHub\data\MemberListProducer.class
+org\uniandes\arquisoft\SecurityHub\service\MemberRegistration.class
+org\uniandes\arquisoft\SecurityHub\data\MemberRepository.class

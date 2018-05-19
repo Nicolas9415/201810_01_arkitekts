@@ -1,0 +1,11 @@
+org\uniandes\arquisoft\securityhub\dto\ResidenciaDto.class
+org\uniandes\arquisoft\securityhub\rest\MemberResourceRESTService.class
+org\uniandes\arquisoft\securityhub\controller\AlarmsMqttController.class
+org\uniandes\arquisoft\securityhub\dto\AlarmaDto.class
+org\uniandes\arquisoft\securityhub\controller\LoginController.class
+org\uniandes\arquisoft\securityhub\controller\BandejaResidenciasController.class
+org\uniandes\arquisoft\securityhub\controller\MemberController.class
+org\uniandes\arquisoft\securityhub\util\WebResources.class
+org\uniandes\arquisoft\securityhub\controller\BandejaAlarmasController.class
+org\uniandes\arquisoft\securityhub\rest\JaxRsActivator.class
+org\uniandes\arquisoft\securityhub\dto\ListaAlarmas.class
