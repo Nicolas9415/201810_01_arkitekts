@@ -211,7 +211,9 @@ void loop()
         Serial.println("Door opened for too long!");
       }
       else{
+         currentKey="";
         Serial.println("Door opened!");
+
       }
     }
     else {
