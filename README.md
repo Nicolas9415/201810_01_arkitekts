@@ -7,6 +7,6 @@ This is a program that simulates a digital lock. Made for the curse Software Arc
 
 Technologies:
 * Arduino
-* Mosquito Broker (MQTT)
+* Mosquito Broker (MQTT) 
 * Java
 * Wildfly
