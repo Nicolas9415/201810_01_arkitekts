@@ -1,4 +1,4 @@
-# 201810_01_arkitekts
+# Arkitekts
 
 This is a program that simulates a digital lock. Made for the curse Software Architecture in the University of the Andes.
 
